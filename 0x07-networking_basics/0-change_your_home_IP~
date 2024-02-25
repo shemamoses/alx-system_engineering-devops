@@ -1,3 +1,0 @@
-cp /etc/hosts ~/hosts.new
-sed -i s/^172.*$// ~/hosts.new
-cp -f ~/hosts.new hello

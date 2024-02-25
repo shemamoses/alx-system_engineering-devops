@@ -1,7 +1,5 @@
-# automatically fix word press on apache server runing on 5000 error
+# Debugs apache2 server error
 
-
-exec { 'Fix server error':
-  command  => 'sudo sed -i "s/.phpp/.php/" /var/www/html/wp-settings.php',
-  provider => shell,
+exec { 'sed -i s/phpp/php/g /var/www/html/wp-settings.php':
+  path => '/usr/bin:/usr/sbin:/bin'
 }

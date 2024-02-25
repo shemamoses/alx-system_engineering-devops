@@ -1,18 +1,37 @@
 #!/usr/bin/python3
-"""Exports to-do list information of all employees to JSON format."""
+''' Test request to parse API's
+'''
+
+
+import csv
 import json
 import requests
+import sys
 
 if __name__ == "__main__":
-    url = "https://jsonplaceholder.typicode.com/"
-    users = requests.get(url + "users").json()
+    api_endpoint = "https://jsonplaceholder.typicode.com"
 
-    with open("todo_all_employees.json", "w") as jsonfile:
-        json.dump({
-            u.get("id"): [{
-                "task": t.get("title"),
-                "completed": t.get("completed"),
-                "username": u.get("username")
-            } for t in requests.get(url + "todos",
-                                    params={"userId": u.get("id")}).json()]
-            for u in users}, jsonfile)
+    def get_user_tasks(id):
+        '''Return data for the user id passed as an argument
+        '''
+        user_id = str(id)
+        user_data = requests.get(api_endpoint + "/users/" + user_id).json()
+        username = user_data.get('username')
+        todo_data = \
+            requests.get(api_endpoint + "/users/" + user_id + "/todos").\
+            json()
+        tasks = []
+        for task in todo_data:
+            tasks.append({'username': username,
+                          'task': task['title'],
+                          'completed': task['completed']})
+        data = {"{}".format(user_id): tasks}
+        return data
+
+        all_users = requests.get(api_endpoint + "/users").json()
+        all_json = {}
+        for user in all_users:
+            user_data = get_user_tasks(user.get('id'))
+            all_json.update(user_data)
+        with open("todo_all_employees.json", 'w') as data_file:
+            json.dump(all_json, data_file)

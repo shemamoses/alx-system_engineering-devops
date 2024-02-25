@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# This script prints the all content of the current directory
-for i in *
+#Script displays all the contents of a directory in list format
+LIST=$(ls)
+for i in $LIST
 do
-    [[ -e "$i" ]]
-    echo "$i" | cut -d '-' -f2
+    echo "$i" | cut -d '-' -f 2
 done

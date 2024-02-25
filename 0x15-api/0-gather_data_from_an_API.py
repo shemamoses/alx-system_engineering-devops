@@ -1,23 +1,28 @@
 #!/usr/bin/python3
-"""
-    Python script that, using this REST API, for a given employee ID,
-"""
+''' Test request to parse API's
+'''
+
 
 import requests
 import sys
 
 if __name__ == "__main__":
-    user_id = sys.argv[1]
-    base_url = 'https://jsonplaceholder.typicode.com/'
-    users_url = requests.get(base_url + 'users/{}'
-                             .format(user_id)).json()
-    todos_url = requests.get(base_url + 'todos?userId={}'
-                             .format(user_id)).json()
-
-    completed_tasks = [task.get('title') for task in todos_url
-                       if task.get('completed') is True]
-    print(f'Employee {users_url.get("name")} '
-          f'is done with tasks({len(completed_tasks)}'
-          f'/{len(todos_url)}):')
-    [print('\t {}'.format(task))
-     for task in completed_tasks]
+    if len(sys.argv) > 1 and sys.argv[1].isdigit():
+        api_endpoint = "https://jsonplaceholder.typicode.com"
+        user_id = sys.argv[1]
+        user_data = requests.get(api_endpoint + "/users/" + user_id).json()
+        employee_name = user_data.get('name')
+        todo_data = \
+            requests.get(api_endpoint + "/users/" + user_id + "/todos").\
+            json()
+        total_num_of_tasks = len(todo_data)
+        completed_tasks = [todo for todo in todo_data
+                           if todo['completed'] is True]
+        num_of_done_tasks = len(completed_tasks)
+        line_one = "Employee {} is done with tasks({}/{}):".format(
+            employee_name,
+            num_of_done_tasks,
+            total_num_of_tasks)
+        print(line_one)
+        for task in completed_tasks:
+            print("\t {}".format(task["title"]))

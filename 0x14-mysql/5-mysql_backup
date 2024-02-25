@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
-# backup and compress my databases
+# Creates backup of mysql database
 
-# variables
-day=$(date +"%d")
-month=$(date +"%m")
-year=$(date +"%Y")
-file_name="$day-$month-$year.tar.gz"
-
-mysqldump --all-databases -u root --password="$1" > backup.sql
-tar -czvf "$file_name" backup.sql
+now=$(date +"%d-%m-%Y");
+sudo mysqldump -u root -p"$1" --all-databases | sudo tee backup.sql
+tar -cvzf "$now".tar.gz backup.sql

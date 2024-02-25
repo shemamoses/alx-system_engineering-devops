@@ -1,24 +1,27 @@
 #!/usr/bin/python3
-"""
-    Python script that, using this REST API, for a given employee ID,
-"""
+''' Test request to parse API's
+'''
 
 
+import csv
 import json
 import requests
 import sys
 
-
 if __name__ == "__main__":
-    user_id = sys.argv[1]
-    base_url = 'https://jsonplaceholder.typicode.com/'
-    users_url = requests.get(base_url + 'users/{}'
-                             .format(user_id)).json()
-    todos_url = requests.get(base_url + 'todos?userId={}'
-                             .format(user_id)).json()
-
-    with open('{}.json'.format(user_id), 'w') as jsonfile:
-        json.dump({user_id: [
-            {'task': task.get('title'), 'completed': task.get('completed'),
-             'username': users_url.get('username')} for
-            task in todos_url]}, jsonfile)
+    if len(sys.argv) > 1 and sys.argv[1].isdigit():
+        api_endpoint = "https://jsonplaceholder.typicode.com"
+        user_id = sys.argv[1]
+        user_data = requests.get(api_endpoint + "/users/" + user_id).json()
+        username = user_data.get('username')
+        todo_data = \
+            requests.get(api_endpoint + "/users/" + user_id + "/todos").\
+            json()
+        with open("{}.json".format(user_id), 'w') as json_file:
+            tasks = []
+            for task in todo_data:
+                tasks.append({'task': task['title'],
+                              'completed': task['completed'],
+                              'username': username})
+            data = {"{}".format(user_id): tasks}
+            json.dump(data, json_file)
